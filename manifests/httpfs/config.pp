@@ -5,6 +5,7 @@ class hadoop::httpfs::config {
   contain hadoop::common::hdfs::config
 
   $keytab = $hadoop::keytab_httpfs
+  $keytab_source = $hadoop::keytab_source_httpfs
 
   file { "${::hadoop::confdir_httpfs}/httpfs-site.xml":
     owner   => 'root',
@@ -14,11 +15,21 @@ class hadoop::httpfs::config {
   }
 
   if $hadoop::realm and $hadoop::realm != '' {
-    file { $keytab:
-      owner => 'httpfs',
-      group => 'httpfs',
-      mode  => '0400',
-      alias => 'httpfs-hadoop.service.keytab',
+    if $keytab_source and $keytab_source != '' {
+      file { $keytab:
+        owner  => 'httpfs',
+        group  => 'httpfs',
+        mode   => '0400',
+        alias  => 'httpfs-hadoop.service.keytab',
+        source => $keytab_source,
+      }
+    } else {
+      file { $keytab:
+        owner => 'httpfs',
+        group => 'httpfs',
+        mode  => '0400',
+        alias => 'httpfs-hadoop.service.keytab',
+      }
     }
   }
 

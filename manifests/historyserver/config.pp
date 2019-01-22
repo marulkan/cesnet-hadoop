@@ -8,6 +8,7 @@ class hadoop::historyserver::config {
   contain hadoop::common::mapred::daemon
 
   $keytab = $hadoop::keytab_jobhistory
+  $keytab_source = $hadoop::keytab_source_jobhistory
   $user = 'mapred'
   $file = '/tmp/krb5cc_jhs'
   $principal = "jhs/${::fqdn}@${hadoop::realm}"
@@ -15,12 +16,23 @@ class hadoop::historyserver::config {
   $krbrefresh = $hadoop::features["krbrefresh"]
 
   if $hadoop::realm and $hadoop::realm != ''{
-    file { $keytab:
-      owner  => 'mapred',
-      group  => 'mapred',
-      mode   => '0400',
-      alias  => 'jhs.service.keytab',
-      before => File['mapred-site.xml'],
+    if $keytab_source and $keytab_source != '' {
+      file { $keytab:
+        owner  => 'mapred',
+        group  => 'mapred',
+        mode   => '0400',
+        alias  => 'jhs.service.keytab',
+        before => File['mapred-site.xml'],
+        source => $keytab_source,
+      }
+    } else { 
+      file { $keytab:
+        owner  => 'mapred',
+        group  => 'mapred',
+        mode   => '0400',
+        alias  => 'jhs.service.keytab',
+        before => File['mapred-site.xml'],
+      }
     }
 
     if $hadoop::features["krbrefresh"] {

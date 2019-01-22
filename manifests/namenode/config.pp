@@ -18,12 +18,23 @@ class hadoop::namenode::config {
   })
 
   if $hadoop::realm and $hadoop::realm != '' {
-    file { $hadoop::keytab_namenode:
-      owner  => 'hdfs',
-      group  => 'hdfs',
-      mode   => '0400',
-      alias  => 'nn.service.keytab',
-      before => File['hdfs-site.xml'],
+    if $hadoop::keytab_source_namenode and $hadoop::keytab_source_namenode != '' {
+      file { $hadoop::keytab_namenode:
+        owner  => 'hdfs',
+        group  => 'hdfs',
+        mode   => '0400',
+        alias  => 'nn.service.keytab',
+        before => File['hdfs-site.xml'],
+        source => $hadoop::keytab_source_namenode,
+      }
+    } else {
+      file { $hadoop::keytab_namenode:
+        owner  => 'hdfs',
+        group  => 'hdfs',
+        mode   => '0400',
+        alias  => 'nn.service.keytab',
+        before => File['hdfs-site.xml'],
+      }
     }
 
     file { $hadoop::https_keytab:

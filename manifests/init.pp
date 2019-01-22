@@ -66,6 +66,16 @@ class hadoop (
   $keytab_resourcemanager = $::hadoop::params::keytab_resourcemanager,
   $keytab_nodemanager = $::hadoop::params::keytab_nodemanager,
   $keytab_nfs = $::hadoop::params::keytab_nfs,
+
+  $keytab_source_namenode = undef,
+  $keytab_source_datanode = undef,
+  $keytab_source_httpfs = undef,
+  $keytab_source_jobhistory = undef,
+  $keytab_source_journalnode = undef,
+  $keytab_source_resourcemanager = undef,
+  $keytab_source_nodemanager = undef,
+  $keytab_source_nfs = undef,
+
 ) inherits hadoop::params {
   include ::stdlib
 

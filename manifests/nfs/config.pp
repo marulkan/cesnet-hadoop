@@ -15,12 +15,23 @@ class hadoop::nfs::config {
   #notice(template('hadoop/env/hdfs-nfs.augeas.erb'))
 
   if $hadoop::realm and $hadoop::realm != '' {
-    file { $hadoop::keytab_nfs:
-      owner  => $hadoop::nfs_system_user,
-      group  => $hadoop::nfs_system_group,
-      mode   => '0400',
-      alias  => 'nfs.service.keytab',
-      before => File['hdfs-site.xml'],
+    if $hadoop::keytab_source_nfs and $hadoop::keytab_source_nfs != '' {
+      file { $hadoop::keytab_nfs:
+        owner  => $hadoop::nfs_system_user,
+        group  => $hadoop::nfs_system_group,
+        mode   => '0400',
+        alias  => 'nfs.service.keytab',
+        before => File['hdfs-site.xml'],
+        source => $hadoop::keytab_source_nfs,
+      }
+    } else {
+      file { $hadoop::keytab_nfs:
+        owner  => $hadoop::nfs_system_user,
+        group  => $hadoop::nfs_system_group,
+        mode   => '0400',
+        alias  => 'nfs.service.keytab',
+        before => File['hdfs-site.xml'],
+      }
     }
   }
 }

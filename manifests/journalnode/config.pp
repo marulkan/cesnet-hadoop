@@ -9,6 +9,7 @@ class hadoop::journalnode::config {
   contain hadoop::common::hdfs::daemon
 
   $keytab = $hadoop::keytab_journalnode
+  $keytab_source = $hadoop::keytab_source_journalnode
   $user = 'hdfs'
   $file = '/tmp/krb5cc_jn'
   $principal = "jn/${::fqdn}@${hadoop::realm}"
@@ -25,11 +26,21 @@ class hadoop::journalnode::config {
   })
 
   if $hadoop::realm and $hadoop::realm != '' {
-    file { $keytab:
-      owner => 'hdfs',
-      group => 'hdfs',
-      mode  => '0400',
-      alias => 'jn.service.keytab',
+    if $keytab_source and $keytab_source != '' {
+      file { $keytab:
+        owner  => 'hdfs',
+        group  => 'hdfs',
+        mode   => '0400',
+        alias  => 'jn.service.keytab',
+        source => $keytab_source,
+      }
+    } else {
+      file { $keytab:
+        owner => 'hdfs',
+        group => 'hdfs',
+        mode  => '0400',
+        alias => 'jn.service.keytab',
+      }
     }
 
     if $hadoop::features["krbrefresh"] {

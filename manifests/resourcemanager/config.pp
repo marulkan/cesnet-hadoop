@@ -8,11 +8,21 @@ class hadoop::resourcemanager::config {
   contain hadoop::common::yarn::daemon
 
   if $hadoop::realm and $hadoop::realm != '' {
-    file { $hadoop::keytab_resourcemanager:
-      owner => 'yarn',
-      group => 'yarn',
-      mode  => '0400',
-      alias => 'rm.service.keytab',
+    if $hadoop::keytab_source_resourcemanager and $hadoop::keytab_source_resourcemanager != '' {
+      file { $hadoop::keytab_resourcemanager:
+        owner  => 'yarn',
+        group  => 'yarn',
+        mode   => '0400',
+        alias  => 'rm.service.keytab',
+        source => $hadoop::keytab_source_resourcemanager,
+      }
+    } else {
+      file { $hadoop::keytab_resourcemanager:
+        owner => 'yarn',
+        group => 'yarn',
+        mode  => '0400',
+        alias => 'rm.service.keytab',
+      }
     }
   }
 

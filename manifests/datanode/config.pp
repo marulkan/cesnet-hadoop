@@ -7,6 +7,7 @@ class hadoop::datanode::config {
   contain hadoop::common::hdfs::daemon
 
   $keytab = $hadoop::keytab_datanode
+  $keytab_source = $hadoop::keytab_source_datanode
   $user = 'hdfs'
   $file = '/tmp/krb5cc_dn'
   $principal = "dn/${::fqdn}@${hadoop::realm}"
@@ -24,11 +25,21 @@ class hadoop::datanode::config {
   })
 
   if $hadoop::realm and $hadoop::realm != '' {
-    file { $keytab:
-      owner => 'hdfs',
-      group => 'hdfs',
-      mode  => '0400',
-      alias => 'dn.service.keytab',
+    if $keytab_source and $keytab_source != '' {
+      file { $keytab:
+        owner  => 'hdfs',
+        group  => 'hdfs',
+        mode   => '0400',
+        alias  => 'dn.service.keytab',
+        source => $keytab_source,
+        }
+    } else {
+      file { $keytab:
+        owner => 'hdfs',
+        group => 'hdfs',
+        mode  => '0400',
+        alias => 'dn.service.keytab',
+        }
     }
 
     if $hadoop::features["krbrefresh"] {

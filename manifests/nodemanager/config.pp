@@ -8,6 +8,7 @@ class hadoop::nodemanager::config {
   contain hadoop::common::yarn::daemon
 
   $keytab = $hadoop::keytab_nodemanager
+  $keytab_source = $hadoop::keytab_source_nodemanager
   $user = 'yarn'
   $file = '/tmp/krb5cc_nm'
   $principal = "nm/${::fqdn}@${hadoop::realm}"
@@ -24,12 +25,23 @@ class hadoop::nodemanager::config {
   }
 
   if $hadoop::realm and $hadoop::realm != '' {
-    file { $keytab:
-      owner  => 'yarn',
-      group  => 'yarn',
-      mode   => '0400',
-      alias  => 'nm.service.keytab',
-      before => File['yarn-site.xml'],
+    if $keytab_source and $keytab_source != '' {
+      file { $keytab:
+        owner  => 'yarn',
+        group  => 'yarn',
+        mode   => '0400',
+        alias  => 'nm.service.keytab',
+        before => File['yarn-site.xml'],
+        source => $keytab_source,
+      }
+    } else {
+      file { $keytab:
+        owner  => 'yarn',
+        group  => 'yarn',
+        mode   => '0400',
+        alias  => 'nm.service.keytab',
+        before => File['yarn-site.xml'],
+      }
     }
 
     if $hadoop::features["krbrefresh"] {
