@@ -75,6 +75,7 @@ class hadoop (
   $keytab_source_resourcemanager = undef,
   $keytab_source_nodemanager = undef,
   $keytab_source_nfs = undef,
+  $keytab_source_http = undef,
 
 ) inherits hadoop::params {
   include ::stdlib
