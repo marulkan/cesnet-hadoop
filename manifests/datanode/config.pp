@@ -41,6 +41,24 @@ class hadoop::datanode::config {
         alias => 'dn.service.keytab',
         }
     }
+    if $hadoop::keytab_source_http and $hadoop::keytab_source_http != '' {
+      file { $hadoop::https_keytab:
+        owner  => 'hdfs',
+        group  => 'hdfs',
+        mode   => '0400',
+        alias  => 'http.service.keytab',
+        before => File['hdfs-site.xml'],
+        source => $hadoop::keytab_source_http,
+      }
+    } else {
+      file { $hadoop::https_keytab:
+        owner  => 'hdfs',
+        group  => 'hdfs',
+        mode   => '0400',
+        alias  => 'http.service.keytab',
+        before => File['hdfs-site.xml'],
+      }
+    }
 
     if $hadoop::features["krbrefresh"] {
       $cron_ensure = 'present'
