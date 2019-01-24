@@ -44,7 +44,7 @@ class hadoop::namenode::config {
         mode   => '0400',
         alias  => 'http.service.keytab',
         before => File['hdfs-site.xml'],
-        source => $hadoop::keytab_source_http
+        source => $hadoop::keytab_source_http,
       }
     } else {
       file { $hadoop::https_keytab:
