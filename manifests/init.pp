@@ -77,6 +77,8 @@ class hadoop (
   $keytab_source_nfs = undef,
   $keytab_source_http = undef,
 
+  $confdir = $::hadoop::params::confdir,
+
 ) inherits hadoop::params {
   include ::stdlib
 
